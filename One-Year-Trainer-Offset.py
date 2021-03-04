@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 
 #HyperParameters
 #Name of file to read from
-Filename = "C:/Users/Annoy/Desktop/Spyder/Useful Code Snippets/Data/Historic BTC-USD data/BTC-USD_Megafile_01_31_2019-12_31_2019.csv"
+Filename = "C:/Users/Annoy/Desktop/Spyder/Useful Code Snippets/Data/Historic BTC-USD data/BTC-USD_Megafile_01_01_2019-12_31_2019.csv"
 Modelname= 'Transformer+TimeEmbedding+BTC-USD-288-24hour_offset'
 #Batch Size
 batch_size = 32
@@ -223,35 +223,36 @@ df['Volume'] = (df['Volume'] - min_volume) / (max_volume - min_volume)
 
 ###############################################################################
 '''Create training, validation and test split'''
-
-df_target=df.Close.iloc[offset:len(df)].reset_index()
-df_in=df.iloc[0:(len(df)-offset)].reset_index()
+df2=df.iloc[0:-288].reset_index()
+df_target=df2.Close.iloc[offset:len(df2)].reset_index()
+df_in=df2.iloc[0:(len(df2)-offset)].reset_index()
 
 times = sorted(df_in.index.values)
 last_10pct = sorted(df_in.index.values)[-int(0.1*len(times))] # Last 10% of series
 last_20pct = sorted(df_in.index.values)[-int(0.2*len(times))] # Last 20% of series
 
-df_train = df[(df_in.index < last_20pct)]  
-df_val = df[(df_in.index >= last_20pct) & (df.index < last_10pct)]
-df_test = df[(df_in.index >= last_10pct)]
+df_train = df_in[(df_in.index < last_20pct)]  
+df_val = df_in[(df_in.index >= last_20pct) & (df_in.index < last_10pct)]
+df_test = df_in[(df_in.index >= last_10pct)]
 
 df_train_target = df_target[(df_target.index < last_20pct)]  
 df_val_target = df_target[(df_target.index >= last_20pct) & (df_target.index < last_10pct)]
 df_test_target = df_target[(df_target.index >= last_10pct)]
 
 # Remove date column
-df_train.drop(columns=['Time','index'], inplace=True)
-df_val.drop(columns=['Time','index'], inplace=True)
-df_test.drop(columns=['Time','index'], inplace=True)
+df_train.drop(columns=['Time','index','level_0'], inplace=True)
+df_val.drop(columns=['Time','index','level_0'], inplace=True)
+df_test.drop(columns=['Time','index','level_0'], inplace=True)
 
 # Convert pandas columns into arrays
 train_data = df_train.values
 val_data = df_val.values
 test_data = df_test.values
 
-train_target=df_train_target.values
-val_target=df_val_target.values
-test_target=df_test_target.values
+
+train_target=df_train_target.Close.values
+val_target=df_val_target.Close.values
+test_target=df_test_target.Close.values
 
 #Moving Average: split data into train, validation, and test set
 # Training data

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 plt.style.use('seaborn')
 
 import warnings
-warnings.filterwarnings('ignore')
+#warnings.filterwarnings('ignore')
 
 Coins=  ['BTC-USD',    #1     List of coin names
          'ETH-USD',    #2
@@ -44,6 +44,7 @@ Coin=Coins[Coin_num] #Coin file is training for
 batch_size = 32
 #Number of ticks network sees at a time
 seq_len = 288
+offset=287
 
 d_k = 256
 d_v = 256
@@ -62,7 +63,7 @@ def aggregate(coin): #inputs:matrix to hold datapoints,coin name as a string, am
    
     five_min=timedelta(minutes=5)
     one_day=timedelta(days=1)
-    two_weeks=timedelta(days=10)
+    two_weeks=timedelta(days=15)
     end_time=datetime.today()
     start_time=end_time-two_weeks
     df=pd.DataFrame(columns=['Time','Low','High','Open','Close','Volume'])
@@ -301,35 +302,37 @@ df['Volume'] = (df['Volume'] - min_volume) / (max_volume - min_volume)
 '''Create training, validation and test split'''
 
 '''Create training, validation and test split'''
-
-df_target=df.Close.iloc[offset:len(df)].reset_index()
-df_in=df.iloc[0:(len(df)-offset)].reset_index()
+df_lastday=df.iloc[-288:].reset_index()
+df2=df.iloc[0:-288].reset_index()
+df_target=df2.Close.iloc[offset:len(df2)].reset_index()
+df_in=df2.iloc[0:(len(df2)-offset)].reset_index()
 
 times = sorted(df_in.index.values)
 last_10pct = sorted(df_in.index.values)[-int(0.1*len(times))] # Last 10% of series
 last_20pct = sorted(df_in.index.values)[-int(0.2*len(times))] # Last 20% of series
 
-df_train = df[(df_in.index < last_20pct)]  
-df_val = df[(df_in.index >= last_20pct) & (df.index < last_10pct)]
-df_test = df[(df_in.index >= last_10pct)]
+df_train = df_in[(df_in.index < last_20pct)]  
+df_val = df_in[(df_in.index >= last_20pct) & (df_in.index < last_10pct)]
+df_test = df_in[(df_in.index >= last_10pct)]
 
 df_train_target = df_target[(df_target.index < last_20pct)]  
 df_val_target = df_target[(df_target.index >= last_20pct) & (df_target.index < last_10pct)]
 df_test_target = df_target[(df_target.index >= last_10pct)]
 
 # Remove date column
-df_train.drop(columns=['Time','index'], inplace=True)
-df_val.drop(columns=['Time','index'], inplace=True)
-df_test.drop(columns=['Time','index'], inplace=True)
-
+df_train.drop(columns=['Time','index','level_0'], inplace=True)
+df_val.drop(columns=['Time','index','level_0'], inplace=True)
+df_test.drop(columns=['Time','index','level_0'], inplace=True)
+df_lastday.drop(columns=['Time','index'], inplace=True)
 # Convert pandas columns into arrays
 train_data = df_train.values
 val_data = df_val.values
 test_data = df_test.values
+last_data=df_lastday.values
 
-train_target=df_train_target.values
-val_target=df_val_target.values
-test_target=df_test_target.values
+train_target=df_train_target.Close.values
+val_target=df_val_target.Close.values
+test_target=df_test_target.Close.values
 
 #Moving Average: split data into train, validation, and test set
 # Training data
@@ -356,6 +359,11 @@ for i in range(seq_len, len(test_data)):
     X_test.append(test_data[i-seq_len:i])
     y_test.append(test_target[i])    
 X_test, y_test = np.array(X_test), np.array(y_test)
+
+X_tom=[]
+for i in range(seq_len, len(last_data)):
+    X_test.append(last_data[i-seq_len:i]) 
+X_last = np.array(X_test)
 
 time=datetime.today().strftime('%m_%d_%Y')
 model = tf.keras.models.load_model('C:/Users/Annoy/Desktop/Spyder/Useful Code Snippets/Models/PredictiveModels/'+Modelname+'.hdf5',
@@ -435,3 +443,13 @@ ax31.set_title("Test Data", fontsize=18)
 ax31.set_xlabel('Time')
 ax31.set_ylabel('Coin Closing Returns')
 ax31.legend(loc="best", fontsize=12)
+
+tomorrow_pred=model.predict(X_last)   
+fig2=plt.figure(figsize=(15,20))
+ax = fig2.add_subplot(111)
+ax.plot(np.arange(seq_len+offset, tomorrow_pred.shape[0]+seq_len+offset), tomorrow_pred, linewidth=3, label='Predicted Coin Closing Returns')
+ax.set_title("Test Data", fontsize=18)
+ax.set_xlabel('Time')
+ax.set_ylabel('Coin Closing Returns')
+ax.legend(loc="best", fontsize=12)
+
