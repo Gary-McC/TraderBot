@@ -1,0 +1,21 @@
+USE INSTRUCTIONS FOR RL AGENT TRAINING
+--backtest.py
+  -backtest.py is the script used for backtesting and evaluating the RL agent model
+  -Ensure backtest.py is in the same folder or project as the agent you are training, as it is imported into the agent training program
+  -DO NOT ADJUST
+  
+--LSTM RL.py
+  -LSTM based RL agent that learns to trade using deep Q learning
+  -How to use:
+    -Open program, adjust file path to point to listed data file.
+    -Ensure backtest.py is in the same folder or project as the agent you are training, as it is imported into the agent training program
+    -Run program
+    -WARNING: Program is not verbose, and may take awhile to train. Let it run, it will yield an output eventually.
+   
+-- Transformer RL.py
+    -Transformer based RL agent that learns to trade using deep Q learning
+  -How to use:
+    -Open program, adjust file path to point to listed data file.
+    -Ensure backtest.py is in the same folder or project as the agent you are training, as it is imported into the agent training program
+    -Run program
+    -WARNING: Program is not verbose, and takes a very long time. Let it run, it will yield an output eventually. May take an excess of 60 hours if run on local machine GPU.
