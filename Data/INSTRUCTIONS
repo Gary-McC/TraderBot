@@ -1,0 +1,17 @@
+FOLDER CONTAINS ALL FILES AND PROGRAMS RELEVANT TO DATA COLLECTION AND AGGREGATION4
+Files:
+-- BTC-USD Data+Date
+  -Contains the Open price, Low price, High price, Close price, and trading Volume for Bitcoin in USD in five minute intervals as specified by the given date. 
+   CSV file covers 24-hours
+--Data Aggregator.py
+  -Aggregates data from CSV files into one large CSV file to allow for training across multiple days.
+  -Aggregated data is saved in the form of a megafile. Some of these are pre-provided in this folder
+  -How to use:
+    -Open program and adjust start and end date parameters to cover the range of file dates to be aggregated into a file
+    -Ensure all BTC-USD files with dates in start and end range are in a folder.
+    -Double check file paths in program to ensure listed file paths point to data folder
+    -Run program. Data will be saved in mega file format
+-- BTC-USD Megafile
+  -BTC-USD data files spanning multiple days within the date range listed in the file name
+  -Data is in five minute intervals
+  -Generated with Data Aggregator.py
