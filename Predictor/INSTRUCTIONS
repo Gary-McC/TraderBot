@@ -1,0 +1,29 @@
+INSTRUCTIONS:
+Files:
+-One-Year-Trainer: generates predictive model of input price data, predicting the price 5 minutes ahead, originally meant to be trained on one year of data.
+	-To use: Download file and a file from Data folder. 
+	-Ensure path to data file is correct in file name
+	-Other parameters adjustable for experimentation
+	-Run file
+
+-Daily-Predictor: Uses premade predictive model from One-Year-Trainer to cross train on most recent data and predict today's values. 
+Currently trains on previous two weeks of data.
+	-To use: Download program file and ensure premade model is available for cross-training purposes
+	-Put path to cross training model in Modelname
+	-Ensure parameters are similar to those in One-Year-Trainer when model was generated for best results
+	-Run file
+
+-One-Year-Trainer-Offset: generates predictive model of input price data, predicting the price 24 hours ahead.
+	-To use: Download file and a file from Data folder. 
+	-Ensure path to data file is correct in file name
+	-Other parameters adjustable for experimentation
+	-Run file
+
+-Daily-Predictor-Offset:Uses premade predictive model from One-Year-Trainer-Offset to cross train on most recent data and predict tomorrow's values. 
+Currently trains on previous two weeks of data.
+	-To use: Download program file and ensure premade model is available for cross-training purposes
+	-Put path to cross training model in Modelname
+	-Ensure parameters are similar to those in One-Year-Trainer-Offset when model was generated for best results
+	-Run file
+
+Predictor_tester.ipynb:Early iteration of Daily-Predictor.py, works similarly to said file.
